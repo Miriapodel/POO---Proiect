@@ -8,7 +8,7 @@ Clasa contine date care retin informatii depsre  numele, prenumele, username-ul,
 
 ### Cos
 
-Cos contine un vector de produse, reprezentand produsele care se afla in cosul utilizatorului, numarul acestora, o variabila de tip Discount care ne arata daca se aplica o reducere pentru produsele dintr-o anumita categorie, precum si o varabila de tip int care arata suma produselor din cos. Clasa cos este capabila sa adauge si sa stearga produse din vectorul de produse, sa calculeze pretul produselor din cos, atat atunci cand pentru acestea nu se aplica nicio reducere, cat si in cazul in care exista un discount pentru o anumita categorie, si sa adauge un discount.
+Cos contine un vector de produse, reprezentand produsele care se afla in cosul utilizatorului, numarul acestora, o variabila de tip Discount care ne arata daca se aplica o reducere pentru produsele dintr-o anumita categorie, precum si o varabila de tip int care arata suma produselor din cos. Clasa cos este capabila sa adauge si sa stearga produse din vectorul de produse, sa calculeze pretul produselor din cos, atat atunci cand pentru acestea nu se aplica nicio reducere, cat si in cazul in care exista un discount pentru o anumita categorie, sa adauge un discount si sa afiseze produsele care se afla la acel moment in cos sau mesajul "Momentan nu exista produse in cos" in cazul in care cosul este gol.
 
 ### Produs
 
