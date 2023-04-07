@@ -21,3 +21,9 @@ Clasa Adresa retine informatii despre strada, numarul strazii, numarul locuintei
 ### Discount
 
 Clasa discount retine doar categoria pentru care se aplica discount-ul si procentul.
+
+## Functionalitati Bonus
+
+* Aplicatia are un meniu interactiv care, cu ajutorul functiilor implementate in clasele descrise mai sus, poate: crea un utilizator, crea un produs si mai apoi sa il adauge in cosul utilizatorului, crea o adresa de livrare si sa o adauge in lista adreselor de livrare a utilizatorului, sa afiseze datele utilizatorului, produsele din cos si adresele de livrare, sa calculeze valoarea produselor din cos si sa o afiseze.
+
+* Pentru clasa Cos a fost implementat constructorul de mutare si a fost supraincarcat operatorul = de mutare.
