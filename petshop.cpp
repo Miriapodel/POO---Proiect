@@ -1,10 +1,8 @@
 #include <iostream>
 #include <cstring>
-#include <fstream>
 
 using namespace std;
 
-ifstream fin("date.in");
 
 class Discount
 {
@@ -13,7 +11,7 @@ class Discount
 
     public:
 
-        Discount(int procent = 0, char categorie[] = "")
+        Discount(int procent = 0, char categorie[] = "_")
         {
             this->procent = procent;
             strcpy(this->categorie, categorie);
@@ -50,15 +48,15 @@ class Adresa
 
         Adresa()
         {
-            strcpy(strada, "");
-            strcpy(blocul, "");
-            strcpy(scara, "");
+            strcpy(strada, "_");
+            strcpy(blocul, "_");
+            strcpy(scara, "_");
             numar_strada = numar_locuinta = 0;
         }
 
         Adresa(char strada[], int numar_strada,
-        int numar_locuinta, char blocul[20] = "",
-        char scara[20] = "")
+        int numar_locuinta, char blocul[20] = "_",
+        char scara[20] = "_")
         {
             strcpy(this->strada, strada);
             strcpy(this->blocul, blocul);
@@ -127,7 +125,7 @@ ostream & operator << ( ostream & out, const Adresa& adresa )
 {
     out << "Strada: "<<adresa.strada<<", numarul: "<<adresa.numar_strada<<", ";
 
-    if ( strcmp(adresa.blocul, "") != 0 )
+    if ( strcmp(adresa.blocul, "_") != 0 )
         out<<"blocul: "<<adresa.blocul<<", scara: "<<adresa.scara<<", ";
 
     out<<"numar locuinta: "<<adresa.numar_locuinta<<endl;
@@ -168,13 +166,13 @@ class Produs
     public:
         Produs()
         {
-            strcpy(nume, "");
-            strcpy(descriere, "");
-            strcpy(categorie, "");
+            strcpy(nume, "_");
+            strcpy(descriere, "_");
+            strcpy(categorie, "_");
             pret = 0;
         }
 
-        Produs(char nume[], char categorie[], float pret, char descriere[] = "")
+        Produs(char nume[], char categorie[], float pret, char descriere[] = "_")
         {
             strcpy(this->nume, nume);
             strcpy(this->categorie, categorie);
@@ -230,7 +228,7 @@ ostream & operator << ( ostream & out, const Produs& produs )
 {
     out<<"Nume produs: "<<produs.nume<<", ";
 
-    if ( strcmp(produs.descriere, "") != 0 )
+    if ( strcmp(produs.descriere, "_") != 0 )
         out<<"descriere: "<<produs.descriere<<", ";
 
     out<<"categorie: "<<produs.categorie<<", pret: "<<produs.pret<<endl;
@@ -278,7 +276,23 @@ class Cos
         void valoare_produse();
         void valoare_dupa_discount();
         void adaugare_discount(int procent, char categorie[]);
+        void afisare_produse_cos();
+
         Cos& operator = (const Cos& cos);
+        Cos& operator = (Cos&& cos);
+
+        Cos(Cos&& cos)
+        {
+            produse = cos.produse;
+            numar_produse = cos.numar_produse;
+            discount = cos.discount;
+            suma_totala = cos.suma_totala;
+
+            cos.produse = NULL;
+            cos.discount = NULL;
+            cos.numar_produse = 0;
+            cos.suma_totala = 0;
+        }
 
         int getNumar_Produse()
         {
@@ -291,6 +305,31 @@ class Cos
         }
 
 };
+
+Cos& Cos::operator = (Cos&& cos)
+{
+    if ( this != &cos )
+    {
+        if ( produse != NULL )
+        {
+            delete[] produse;
+        }
+
+        produse = cos.produse;
+        numar_produse = cos.numar_produse;
+        discount = cos.discount;
+        suma_totala = cos.suma_totala;
+
+        cos.produse = NULL;
+        cos.discount = NULL;
+        cos.numar_produse = 0;
+        cos.suma_totala = 0;
+
+        return *this;
+    }
+
+    return *this;
+}
 
 void Cos::adauga_produs(const Produs& produs)
 {
@@ -313,7 +352,6 @@ void Cos::adauga_produs(const Produs& produs)
                 numar_produse++;
                 delete[]produse;
                 produse = aux;
-
             }
 }
 
@@ -409,6 +447,21 @@ Cos& Cos::operator = (const Cos& cos)
     return *this;
 }
 
+void Cos::afisare_produse_cos()
+{
+    if ( numar_produse != 0 )
+    {
+        for ( int i = 0; i < numar_produse; i++ )
+        {
+            cout<<produse[i];
+        }
+    }
+    else
+    {
+        cout<<"Momentan nu exista produse in cos"<<endl<<endl;
+    }
+}
+
 class Utilizator
 {
 
@@ -423,14 +476,14 @@ class Utilizator
         {
             adrese = NULL;
             numar_adrese = 0;
-            strcpy(nume, "");
-            strcpy(prenume, "");
-            strcpy(username, "");
-            strcpy(parola, "");
-            strcpy(email, "");
+            strcpy(nume, "_");
+            strcpy(prenume, "_");
+            strcpy(username, "_");
+            strcpy(parola, "_");
+            strcpy(email, "_");
         }
 
-        Utilizator(char username[], char parola[], char email[] = "", char nume[] = "", char prenume[] = "")
+        Utilizator(char username[], char parola[], char email[] = "_", char nume[] = "_", char prenume[] = "_")
         {
             adrese = NULL;
             numar_adrese = 0;
@@ -502,8 +555,31 @@ class Utilizator
         }
 
         void afisare_adrese();
+        void adauga_produs(const Produs& produs);
+        void valoare_produse();
+        int getSuma_Totala();
+
+        Cos getCos()
+        {
+            return this->cos;
+        }
 
 };
+
+int Utilizator::getSuma_Totala()
+{
+    return cos.getSuma_Totala();
+}
+
+void Utilizator::valoare_produse()
+{
+    cos.valoare_produse();
+}
+
+void Utilizator::adauga_produs(const Produs& produs)
+{
+    cos.adauga_produs(produs);
+}
 
 void Utilizator::adauga_adresa(const Adresa& adresa)
 {
@@ -563,10 +639,19 @@ void Utilizator::sterge_adresa(int pozitie)
 
 void Utilizator::afisare_adrese()
 {
-    for ( int i = 0; i < numar_adrese; i++ )
+    if ( numar_adrese != 0 )
     {
-        cout<<adrese[i];
+        for ( int i = 0; i < numar_adrese; i++ )
+        {
+            cout<<adrese[i];
+        }
     }
+    else
+    {
+        cout<<endl<<"Momentan nicio adresa nu a fost adaugata."<<endl;
+    }
+
+    
 }
 
 void testare()
@@ -622,15 +707,188 @@ void testare()
 
     cout<<prod2;
 
+    cout<<endl<<"TEST MOVE"<<endl;
 
+    Produs p("Shaorma", "Mancare", 20);
+
+    Cos cos3;
+
+    cos3.adauga_produs(p);
+
+    cos3.valoare_produse();
+    cos3.getSuma_Totala();
+
+    Cos cos4(move(cos3));
+
+    cout<<cos3.getSuma_Totala()<<endl;
+
+    cos4.afisare_produse_cos();
+    cos3.afisare_produse_cos();
+
+    cos4.valoare_produse();
+    cout<<cos4.getSuma_Totala()<<endl;
+
+}
+
+void meniu_interactiv()
+{
+    char nume[50], prenume[50], email[50], username[50], parola[50];
+
+   cout<<"Creeaza un utilizator nou!"<<endl; 
+   cout<<"Nume: ( tasteaza _ daca nu doresti sa completezi ) ";
+   cin.get(nume, 50);
+   cin.ignore();
+   cout<<"Prenume: ( tasteaza _ daca nu doresti sa completezi ) ";
+   cin.get(prenume, 50);
+   cin.ignore();
+   cout<<"Email: ( tasteaza _ daca nu doresti sa completezi ) ";
+   cin.get(email, 50);
+   cin.ignore();
+   cout<<"Username: ";
+   cin.get(username, 50);
+   cin.ignore();
+   cout<<"Parola: ";
+   cin.get(parola, 50);
+   cin.ignore();
+   cout<<endl;
+
+   Utilizator utilizator(username, parola, email, nume, prenume);
+
+   bool meniu = 1;
+   int optiune;
+
+    
+
+   while ( meniu != 0 )
+   {
+        cout<<"1. Adauga un produs in cos"<<endl;
+        cout<<"2. Adauga o adresa de livrare"<<endl;
+        cout<<"3. Afiseaza datele utilizatorului"<<endl;
+        cout<<"4. Afiseaza produsele din cos"<<endl;
+        cout<<"5. Afiseaza adresele de livrare ale utilizatorului"<<endl;
+        cout<<"6. Afiseaza suma totala a produselor din cos"<<endl;
+        cout<<"7. Inchide"<<endl;
+        cout<<endl<<" Tasteza numarul optiunii pe care vrei sa o alegi! "<<endl;
+
+
+        cin>>optiune;
+
+        switch ( optiune )
+        {
+            case 1:
+            {
+                char nume[50], descriere[50], categorie[50];
+                int pret;
+
+                cin.ignore();
+                cout<<"Introdu numele produsului: ";
+                cin.get(nume, 50);
+                cin.ignore();
+                cout<<"Introdu descrierea produsului ( tasteaza _ daca nu doresti sa completezi ): ";
+                cin.get(descriere, 50);
+                cin.ignore();
+                cout<<"Introdu categoria din care face parte produsul: ";
+                cin.get(categorie, 50);
+                cin.ignore();
+                cout<<"Introdu pretul produsului: ";
+                cin>>pret;
+
+                Produs p(nume, categorie, pret, descriere);
+
+                utilizator.adauga_produs(p);
+    
+                cout<<endl<<"Produsul a fost adaugat cu succes!"<<endl<<endl;
+
+                break;
+            }
+            case 2:
+            {
+                char strada[50], blocul[50], scara[50];
+                int numar_strada, numar_locuinta;
+
+                cout<<"Introdu numele strazii: ";
+                cin.ignore();
+                cin.get(strada, 50);
+                cin.ignore();
+                cout<<"Introdu numarul strazii: ";
+             
+                cin>>numar_strada;
+                cin.ignore();
+                cout<<"Introdu blocul ( tasteaza _ daca nu este cazul ): ";
+                
+                cin.get(blocul, 50);
+                cin.ignore();
+                cout<<"Introdu scara ( tasteaza _ daca nu este cazul ): ";
+                
+                cin.get(scara, 50);
+                cin.ignore();
+                cout<<"Introdu numarul locuintei: ";
+              
+                cin>>numar_locuinta;
+
+                Adresa adresa(strada, numar_strada, numar_locuinta, blocul, scara);
+
+                utilizator.adauga_adresa(adresa);
+
+                cout<<endl<<"Adresa a fost adaugata cu succes!"<<endl;
+
+                break;
+            }
+            case 3:
+            {
+                char nume[50], prenume[50], email[50], username[50], parola[50];
+
+                utilizator.getNume(nume);
+                utilizator.getPrenume(prenume);
+                utilizator.getEmail(email);
+                utilizator.getUsername(username);
+                utilizator.getParola(parola);
+
+                cout<<"Nume: "<<nume<<endl;
+                cout<<"Prenume: "<<prenume<<endl;
+                cout<<"Email: "<<email<<endl;
+                cout<<"Username: "<<username<<endl;
+
+                break;
+            }
+            case 4:
+            {
+               utilizator.getCos().afisare_produse_cos();
+
+               break;
+            }
+            case 5:
+            {
+                utilizator.afisare_adrese();
+
+                break;
+            }
+            case 6:
+            {
+                utilizator.valoare_produse();
+                cout<<"Valoarea produselor din cos este de "<<utilizator.getSuma_Totala()<<" lei."<<endl<<endl;
+                break;
+            }
+            case 7:
+            {
+                cout<<"Aplicatia a fost inchisa !"<<endl;
+
+                meniu = 0;
+            }
+            default:
+            {
+                break;
+            }
+        }
+
+   }
 }
 
 int main()
 {
 
-    testare();
-
-    fin.close();
+    meniu_interactiv();
+    //testare();
 
     return 0;
 }
